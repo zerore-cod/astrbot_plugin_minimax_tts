@@ -1286,35 +1286,35 @@ class TTSEmotionRouter(Star):
         self._update_components_from_config()
         return umo
 
-    @filter.command("tts_help", priority=1)
+    @filter.command("语音帮助", priority=1)
     async def tts_help(self, event: AstrMessageEvent):
         msg = (
-            "TTS 指令说明\n"
-            "- tts_on / tts_off: 当前会话开关自动语音\n"
-            "- tts_all_on / tts_all_off: 全局开关自动语音\n"
-            "- tts_prob_on / tts_prob_off: 开关插件层概率\n"
-            "- tts_prob <0~1>: 设置概率（例如 0.35）\n"
-            "- tts_emotion <fluent|happy|sad|angry|fearful|surprised|neutral|auto>: 设置情绪\n"
-            "  auto=不传 emotion 字段，交给 MiniMax 自动判断\n"
-            "- tts_payload_preview [文本]: 预览将发送给 MiniMax 的请求体\n"
-            "- tts_status: 查看当前状态\n"
-            "- tts_say <文本>: 立即合成并发送语音\n"
-            "- tts_test <文本>: tts_say 的别名\n"
-            "说明: 非流式场景下自动语音更稳定。"
+            "语音指令\n"
+            "- 语音开 / 语音关: 当前会话开关自动语音\n"
+            "- 语音全开 / 语音全关: 全局开关自动语音\n"
+            "- 语音概率开 / 语音概率关: 开关概率策略\n"
+            "- 语音概率 <0~1>: 设置概率（例如 0.35）\n"
+            "- 声线 <流畅|开心|难过|生气|害怕|惊讶|中性|自动>: 切换声线\n"
+            "  自动=不传 emotion 字段，交给 MiniMax 自动判断\n"
+            "- 语音请求预览 [文本]: 预览将发送给 MiniMax 的请求体\n"
+            "- 语音状态: 查看当前状态\n"
+            "- 发语音 <文本>: 立即合成并发送语音\n"
+            "- 语音测试 <文本>: 发语音 的别名\n"
+            "提示: 非流式场景下自动语音更稳定。"
         )
         yield event.plain_result(msg)
 
-    @filter.command("tts_on", priority=1)
+    @filter.command("语音开", priority=1)
     async def tts_on(self, event: AstrMessageEvent):
         umo = await self._switch_voice_output_for_current_umo(event, enable=True)
         yield event.plain_result(f"当前会话已开启语音输出。UMO={umo}")
 
-    @filter.command("tts_off", priority=1)
+    @filter.command("语音关", priority=1)
     async def tts_off(self, event: AstrMessageEvent):
         umo = await self._switch_voice_output_for_current_umo(event, enable=False)
         yield event.plain_result(f"当前会话已关闭语音输出。UMO={umo}")
 
-    @filter.command("tts_all_on", priority=1)
+    @filter.command("语音全开", priority=1)
     async def tts_all_on(self, event: AstrMessageEvent):
         _ = event
         await self.config.set_voice_output_enable_async(True)
@@ -1324,16 +1324,16 @@ class TTSEmotionRouter(Star):
         self._update_components_from_config()
         yield event.plain_result("已开启全局自动语音输出（含概率策略）。")
 
-    @filter.command("tts_all_off", priority=1)
+    @filter.command("语音全关", priority=1)
     async def tts_all_off(self, event: AstrMessageEvent):
         _ = event
         await self.config.set_voice_output_enable_async(False)
         self._update_components_from_config()
         yield event.plain_result(
-            "已关闭全局自动语音输出。可用 tts_say 或 tts_speak 按需发语音。"
+            "已关闭全局自动语音输出。可用 /发语音 按需发声；也可由模型按需调用语音工具。"
         )
 
-    @filter.command("tts_prob_on", priority=1)
+    @filter.command("语音概率开", priority=1)
     async def tts_prob_on(self, event: AstrMessageEvent):
         _ = event
         await self.config.set_feature_policy_async(
@@ -1342,7 +1342,7 @@ class TTSEmotionRouter(Star):
         self._update_components_from_config()
         yield event.plain_result("已开启概率语音策略。")
 
-    @filter.command("tts_prob_off", priority=1)
+    @filter.command("语音概率关", priority=1)
     async def tts_prob_off(self, event: AstrMessageEvent):
         _ = event
         await self.config.set_feature_policy_async(
@@ -1351,7 +1351,7 @@ class TTSEmotionRouter(Star):
         self._update_components_from_config()
         yield event.plain_result("已关闭概率语音策略。")
 
-    @filter.command("tts_prob", priority=1)
+    @filter.command("语音概率", priority=1)
     async def tts_prob(self, event: AstrMessageEvent, value: Optional[str] = None):
         if value is None:
             yield event.plain_result(f"当前 prob={self.prob}")
@@ -1360,31 +1360,52 @@ class TTSEmotionRouter(Star):
         try:
             prob = float(value)
         except Exception:
-            yield event.plain_result("用法: tts_prob <0~1>")
+            yield event.plain_result("用法: 语音概率 <0~1>")
             return
 
         if prob < 0 or prob > 1:
-            yield event.plain_result("用法: tts_prob <0~1>")
+            yield event.plain_result("用法: 语音概率 <0~1>")
             return
 
         await self.config.set_prob_async(prob)
         self._update_components_from_config()
         yield event.plain_result(f"已设置 prob={self.prob}")
 
-    @filter.command("tts_emotion", priority=1)
+    @filter.command("声线", priority=1)
     async def tts_emotion(self, event: AstrMessageEvent, value: Optional[str] = None):
         umo = self._get_umo(event)
         st = self._get_session_state(umo)
 
         if value is None:
-            current = getattr(st, "manual_emotion", None) or "auto(omit emotion)"
+            current = getattr(st, "manual_emotion", None) or "自动(omit emotion)"
             yield event.plain_result(
                 "当前手动情绪: " + str(current) + "\n"
-                "用法: tts_emotion <fluent|happy|sad|angry|fearful|surprised|neutral|auto>"
+                "用法: 声线 <流畅|开心|难过|生气|害怕|惊讶|中性|自动>"
             )
             return
 
-        emo = str(value).strip().lower()
+        emo_raw = str(value).strip().lower()
+        emo_alias = {
+            "auto": "auto",
+            "自动": "auto",
+            "fluent": "fluent",
+            "流畅": "fluent",
+            "neutral": "neutral",
+            "中性": "neutral",
+            "happy": "happy",
+            "开心": "happy",
+            "高兴": "happy",
+            "sad": "sad",
+            "难过": "sad",
+            "伤心": "sad",
+            "angry": "angry",
+            "生气": "angry",
+            "fearful": "fearful",
+            "害怕": "fearful",
+            "surprised": "surprised",
+            "惊讶": "surprised",
+        }
+        emo = emo_alias.get(emo_raw, emo_raw)
         if emo == "auto":
             st.manual_emotion = None
             st.pending_emotion = None
@@ -1394,7 +1415,7 @@ class TTSEmotionRouter(Star):
         valid = {"fluent", "happy", "sad", "angry", "fearful", "surprised", "neutral"}
         if emo not in valid:
             yield event.plain_result(
-                "用法: tts_emotion <fluent|happy|sad|angry|fearful|surprised|neutral|auto>"
+                "用法: 声线 <流畅|开心|难过|生气|害怕|惊讶|中性|自动>"
             )
             return
 
@@ -1402,7 +1423,7 @@ class TTSEmotionRouter(Star):
         st.pending_emotion = emo
         yield event.plain_result(f"已设置当前会话情绪为: {emo}")
 
-    @filter.command("tts_payload_preview", priority=1)
+    @filter.command("语音请求预览", priority=1)
     async def tts_payload_preview(
         self, event: AstrMessageEvent, text: Optional[str] = None
     ):
@@ -1447,11 +1468,10 @@ class TTSEmotionRouter(Star):
         import json
 
         yield event.plain_result(
-            "MiniMax payload 预览:\n"
-            + json.dumps(payload, ensure_ascii=False, indent=2)
+            "MiniMax 请求体预览:\n" + json.dumps(payload, ensure_ascii=False, indent=2)
         )
 
-    @filter.command("tts_status", priority=1)
+    @filter.command("语音状态", priority=1)
     async def tts_status(self, event: AstrMessageEvent):
         umo = self._get_umo(event)
         provider = self.config.get_tts_provider()
@@ -1478,7 +1498,7 @@ class TTSEmotionRouter(Star):
         )
         yield event.plain_result(msg)
 
-    @filter.command("tts_say", priority=1)
+    @filter.command("发语音", priority=1)
     async def tts_say(self, event: AstrMessageEvent, text: Optional[str] = None):
         content = (text or DEFAULT_TEST_TEXT).strip()
         if not content:
@@ -1491,9 +1511,9 @@ class TTSEmotionRouter(Star):
 
         yield event.chain_result(chain)
 
-    @filter.command("tts_test", priority=1)
+    @filter.command("语音测试", priority=1)
     async def tts_test(self, event: AstrMessageEvent, text: Optional[str] = None):
-        """tts_test 别名，等价于 tts_say。"""
+        """语音测试别名，等价于发语音。"""
         async for res in self.tts_say(event, text):
             yield res
 
@@ -1517,7 +1537,7 @@ class TTSEmotionRouter(Star):
             if not self._has_explicit_voice_intent(user_text):
                 return (
                     "已拦截 tts_speak：当前用户消息未明确要求语音播报。"
-                    "请在用户消息中明确包含“语音回复/读出来/tts_say”等指令后再调用。"
+                    "请在用户消息中明确包含“发语音/语音回复/读出来”等请求后再调用。"
                 )
 
             send_result = await self._send_manual_tts(

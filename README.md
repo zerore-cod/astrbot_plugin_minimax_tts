@@ -1,61 +1,51 @@
-# MiniMax TTS 插件（minimax_tts）
+# MiniMax Voice (minimax_tts)
 
-[![Version](https://img.shields.io/badge/version-0.10-blue.svg)](https://github.com/zerore-cod/astrbot_plugin_minimax_tts)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+把 AstrBot 的文字回复转换成语音输出，并尽量贴近 MiniMax `t2a_v2` 的默认行为与克隆声线体验。
 
-MiniMax TTS 插件：尽量还原 MiniMax 的克隆声线，支持多种情绪声线切换、会话策略、分段/概率输出与按需语音调用。
+本插件面向“稳定可用”的语音输出：自动语音可控、按需语音可靠、长文本不炸、会话隔离清晰。
 
-## 功能概览
+## 能做什么
 
-- 支持双 TTS 服务商：`minimax` / `siliconflow`
-- 支持多种情绪声线切换（由会话情绪/标记/手动设置驱动）
-- 多策略控制：
-  - 自动语音输出 `voice_output`
-  - 文字+语音同时输出 `text_voice_output`
-  - 分段语音输出 `segmented_output`
-  - 概率语音输出 `probability_output`
-- 支持按需触发语音输出：
-  - 命令：`tts_say`
-  - LLM 工具：`tts_speak(text: str)`
+- 后端：支持 `minimax` / `siliconflow`
+- 声线切换：支持多种情绪声线（通过映射/会话设置驱动）
+- 会话策略：支持 UMO 级别黑白名单、冷却、长度限制
+- 输出形态：支持分段语音、概率触发、文字+语音同发
+- 按需语音：用户明确要求时，可由命令或函数工具触发语音
 
-## 快速开始
+## 安装
 
-1. 在 AstrBot 插件目录安装并启用本插件。
-2. 安装 `ffmpeg`（系统可直接调用即可）。
-3. 在插件配置面板填写 TTS 参数（推荐先用 MiniMax 跑通）。
-4. 在群聊或私聊发送：
-   - `/sid` 获取当前会话 UMO
-   - `tts_status` 查看当前插件状态
-   - `tts_test` 或 `tts_say` 测试语音输出
+1. 将插件目录放入：`AstrBot/data/plugins/astrbot_plugin_minimax_tts/`
+2. 安装 `ffmpeg`，并确保命令行能执行：`ffmpeg -version`
+3. WebUI -> 插件 -> `minimax_tts` -> 填写配置并重载插件
 
-## 常用命令
+## 中文指令
 
-| 命令 | 说明 |
-|------|------|
-| `tts_help` | 指令说明 |
-| `tts_on` / `tts_off` | 开关当前会话自动语音 |
-| `tts_all_on` / `tts_all_off` | 开关全局自动语音（保留按需语音） |
-| `tts_prob_on` / `tts_prob_off` | 开关概率策略 |
-| `tts_prob <0~1>` | 设置概率（例如 `tts_prob 0.35`） |
-| `tts_emotion <...>` | 设置情绪（`auto` 表示不传 emotion 字段） |
-| `tts_payload_preview [文本]` | 预览 MiniMax 请求体 |
-| `tts_say [文本]` | 立即合成并发送语音 |
-| `tts_test [文本]` | `tts_say` 别名 |
+这些指令都需要加 `/` 前缀（例如 `/语音状态`）。
 
-LLM 工具（函数调用）：
+- `/语音帮助`：查看指令说明
+- `/语音开` / `/语音关`：开启/关闭“当前会话”的自动语音
+- `/语音全开` / `/语音全关`：开启/关闭“全局”的自动语音（不影响按需语音）
+- `/语音概率开` / `/语音概率关`：开启/关闭概率触发
+- `/语音概率 <0~1>`：设置概率（例如 `/语音概率 0.35`）
+- `/声线 <自动|流畅|开心|难过|生气|害怕|惊讶|中性>`：切换声线（`自动` 表示不传 emotion 字段）
+- `/语音请求预览 [文本]`：预览将发送给 MiniMax 的请求体（用于排查）
+- `/语音状态`：查看当前会话状态（含 UMO、开关、概率等）
+- `/发语音 [文本]`：立即合成并发送语音（不填文本使用默认测试句）
+- `/语音测试 [文本]`：`/发语音` 的别名
 
-- `tts_speak(text: str)`：在用户明确要求语音时由模型调用输出语音。
+## 函数调用（按需语音）
 
-## 配置提示
+可配合人格提示词，让模型在用户明确提出“发语音/语音回复/读出来”等诉求时触发按需语音输出。
 
-- UMO：在聊天中发送 `/sid` 获取，黑白名单字段填写 UMO。
-- MiniMax：接口使用 `https://api.minimaxi.com/v1/t2a_v2`。
-- `pronunciation_dict`：支持 JSON 或简写（可多行），例如：
+## 推荐使用流程
 
-```text
-处理/(chu3)(li3)
-```
+1. 先关闭全局自动语音：`/语音全关`
+2. 用 `/发语音` 验证 API/音色/格式无误
+3. 需要自动语音时，再对具体会话执行：`/语音开`
+
+## 注意
+
+- 配置文件里包含 API Key，请勿提交到公开仓库。
 
 ## 项目信息
 
