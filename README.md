@@ -46,5 +46,5 @@
 ## 项目信息
 
 - 作者：zerore-cod
-- 仓库：<https://github.com/zerore-cod/astrbot_plugin_minimax_tts>
+- 仓库：<https://github.com/zerore-cod/astrbot_plugin_ai_tts>
 - 协议：MIT
