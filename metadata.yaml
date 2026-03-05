@@ -1,10 +1,11 @@
-name: minimax_tts
+name: astrbot_plugin_ai_tts
+display_name: Ai语音
 author: zerore-cod
 version: "0.10"
 desc: "MiniMax TTS 插件：尽量还原 MiniMax 的克隆声线，支持多种情绪声线切换、会话策略、分段/概率与按需语音调用。"
-repo: https://github.com/zerore-cod/astrbot_plugin_minimax_tts
+repo: https://github.com/zerore-cod/astrbot_plugin_ai_tts
 entry: main.py
-homepage: https://github.com/zerore-cod/astrbot_plugin_minimax_tts
+homepage: https://github.com/zerore-cod/astrbot_plugin_ai_tts
 license: MIT
 tags:
   - tts
