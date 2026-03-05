@@ -1,0 +1,12 @@
+name: minimax_tts
+author: zerore-cod
+version: "0.10"
+desc: "MiniMax TTS 插件：尽量还原 MiniMax 的克隆声线，支持多种情绪声线切换、会话策略、分段/概率与按需语音调用。"
+repo: https://github.com/zerore-cod/astrbot_plugin_minimax_tts
+entry: main.py
+homepage: https://github.com/zerore-cod/astrbot_plugin_minimax_tts
+license: MIT
+tags:
+  - tts
+  - minimax
+  - siliconflow

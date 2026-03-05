@@ -1,0 +1,596 @@
+{
+  "umo_guide": {
+    "type": "string",
+    "description": "UMO 获取说明",
+    "default": "在聊天中发送 /sid 获取当前会话 UMO。下面所有黑白名单字段都填写 UMO。",
+    "hint": "仅用于展示提示，建议保持默认值。"
+  },
+  "tts_engine": {
+    "type": "object",
+    "description": "TTS 引擎设置",
+    "items": {
+      "provider": {
+        "type": "string",
+        "description": "语音服务商",
+        "options": ["siliconflow", "minimax"],
+        "default": "minimax"
+      },
+      "timeout": {
+        "type": "int",
+        "description": "请求超时（秒）",
+        "default": 30
+      },
+      "max_retries": {
+        "type": "int",
+        "description": "失败重试次数",
+        "default": 2
+      },
+      "siliconflow": {
+        "type": "object",
+        "description": "SiliconFlow 配置",
+        "condition": {
+          "provider": "siliconflow"
+        },
+        "items": {
+          "url": {
+            "type": "string",
+            "description": "API 地址",
+            "default": "https://api.siliconflow.cn/v1"
+          },
+          "key": {
+            "type": "string",
+            "description": "API Key",
+            "default": ""
+          },
+          "model": {
+            "type": "string",
+            "description": "模型名",
+            "default": "gpt-tts-pro"
+          },
+          "format": {
+            "type": "string",
+            "description": "音频格式",
+            "options": ["mp3", "wav", "opus", "pcm"],
+            "default": "mp3"
+          },
+          "speed": {
+            "type": "float",
+            "description": "默认语速",
+            "default": 1.0
+          },
+          "gain": {
+            "type": "float",
+            "description": "增益（dB）",
+            "default": 0
+          },
+          "sample_rate": {
+            "type": "int",
+            "description": "采样率",
+            "default": 44100
+          },
+          "default_voice": {
+            "type": "string",
+            "description": "默认音色 ID（至少配置 neutral）",
+            "default": ""
+          }
+        }
+      },
+      "minimax": {
+        "type": "object",
+        "description": "MiniMax 配置",
+        "condition": {
+          "provider": "minimax"
+        },
+        "items": {
+          "url": {
+            "type": "string",
+            "description": "API 地址",
+            "default": "https://api.minimaxi.com/v1/t2a_v2"
+          },
+          "key": {
+            "type": "string",
+            "description": "API Key",
+            "default": ""
+          },
+          "model": {
+            "type": "string",
+            "description": "模型名",
+            "default": "speech-2.8-hd"
+          },
+          "voice_id": {
+            "type": "string",
+            "description": "默认音色 voice_id",
+            "default": "BocchiTheRock01"
+          },
+          "speed": {
+            "type": "float",
+            "description": "默认语速",
+            "default": 1.0
+          },
+          "vol": {
+            "type": "float",
+            "description": "默认音量",
+            "default": 1.0
+          },
+          "pitch": {
+            "type": "int",
+            "description": "默认音调",
+            "default": 0
+          },
+          "emotion": {
+            "type": "string",
+            "description": "默认情绪",
+            "default": "fluent"
+          },
+          "audio_format": {
+            "type": "string",
+            "description": "音频格式",
+            "options": ["mp3", "wav", "pcm"],
+            "default": "mp3"
+          },
+          "sample_rate": {
+            "type": "int",
+            "description": "采样率",
+            "default": 32000
+          },
+          "bitrate": {
+            "type": "int",
+            "description": "比特率",
+            "default": 128000
+          },
+          "channel": {
+            "type": "int",
+            "description": "声道数",
+            "default": 1
+          },
+          "pronunciation_dict": {
+            "type": "string",
+            "description": "发音词典（支持 JSON 或简写：词语/读音）",
+            "hint": "可填 JSON：{\"tone\": []}；也可填简写：处理/(chu3)(li3)（支持多行）",
+            "default": "{\"tone\": []}"
+          },
+          "subtitle_enable": {
+            "type": "bool",
+            "description": "是否返回字幕",
+            "default": false
+          },
+          "output_format": {
+            "type": "string",
+            "description": "输出格式（官方示例常用 hex）",
+            "default": "hex"
+          },
+          "language_boost": {
+            "type": "string",
+            "description": "语言增强（官方示例常用 auto）",
+            "default": "auto"
+          }
+        }
+      }
+    }
+  },
+  "feature_policies": {
+    "type": "object",
+    "description": "功能开关策略（每项都支持 UMO 黑白名单）",
+    "items": {
+      "voice_output": {
+        "type": "object",
+        "description": "自动语音输出",
+        "items": {
+          "enable": {
+            "type": "bool",
+            "description": "启用该功能",
+            "default": true
+          },
+          "mode": {
+            "type": "string",
+            "description": "名单模式",
+            "options": ["blacklist", "whitelist"],
+            "default": "blacklist"
+          },
+          "enabled_umos": {
+            "type": "list",
+            "description": "白名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "whitelist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          },
+          "disabled_umos": {
+            "type": "list",
+            "description": "黑名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "blacklist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          }
+        }
+      },
+      "text_voice_output": {
+        "type": "object",
+        "description": "文字与语音同时输出",
+        "items": {
+          "enable": {
+            "type": "bool",
+            "description": "启用该功能",
+            "default": false
+          },
+          "mode": {
+            "type": "string",
+            "description": "名单模式",
+            "options": ["blacklist", "whitelist"],
+            "default": "whitelist"
+          },
+          "enabled_umos": {
+            "type": "list",
+            "description": "白名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "whitelist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          },
+          "disabled_umos": {
+            "type": "list",
+            "description": "黑名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "blacklist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          }
+        }
+      },
+      "segmented_output": {
+        "type": "object",
+        "description": "分段语音输出",
+        "items": {
+          "enable": {
+            "type": "bool",
+            "description": "启用该功能",
+            "default": false
+          },
+          "mode": {
+            "type": "string",
+            "description": "名单模式",
+            "options": ["blacklist", "whitelist"],
+            "default": "blacklist"
+          },
+          "enabled_umos": {
+            "type": "list",
+            "description": "白名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "whitelist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          },
+          "disabled_umos": {
+            "type": "list",
+            "description": "黑名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "blacklist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          }
+        }
+      },
+      "probability_output": {
+        "type": "object",
+        "description": "概率语音输出",
+        "items": {
+          "enable": {
+            "type": "bool",
+            "description": "启用该功能",
+            "default": true
+          },
+          "mode": {
+            "type": "string",
+            "description": "名单模式",
+            "options": ["blacklist", "whitelist"],
+            "default": "blacklist"
+          },
+          "enabled_umos": {
+            "type": "list",
+            "description": "白名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "whitelist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          },
+          "disabled_umos": {
+            "type": "list",
+            "description": "黑名单 UMO",
+            "items": {
+              "type": "string"
+            },
+            "condition": {
+              "mode": "blacklist"
+            },
+            "hint": "UMO 通过 /sid 获取。"
+          }
+        }
+      }
+    }
+  },
+  "probability": {
+    "type": "object",
+    "description": "概率设置",
+    "items": {
+      "prob": {
+        "type": "float",
+        "description": "语音触发概率（0~1）",
+        "default": 0.8
+      }
+    }
+  },
+  "text_limit": {
+    "type": "int",
+    "description": "最大文本长度",
+    "default": 200
+  },
+  "text_min_limit": {
+    "type": "int",
+    "description": "最小文本长度",
+    "default": 5
+  },
+  "cooldown": {
+    "type": "int",
+    "description": "冷却时间（秒）",
+    "default": 0
+  },
+  "allow_mixed": {
+    "type": "bool",
+    "description": "允许混合消息（包含图片/引用等）进入语音流程",
+    "default": false
+  },
+  "show_references": {
+    "type": "bool",
+    "description": "在文本输出中显示提取出的链接和代码片段",
+    "default": true
+  },
+  "segmented_tts": {
+    "type": "object",
+    "description": "分段语音运行参数",
+    "items": {
+      "enable": {
+        "type": "bool",
+        "description": "启用分段逻辑",
+        "default": false
+      },
+      "interval_mode": {
+        "type": "string",
+        "description": "分段发送间隔模式",
+        "options": ["fixed", "adaptive"],
+        "default": "fixed"
+      },
+      "fixed_interval": {
+        "type": "float",
+        "description": "固定间隔（秒）",
+        "default": 1.5
+      },
+      "adaptive_buffer": {
+        "type": "float",
+        "description": "自适应模式附加缓冲（秒）",
+        "default": 0.5
+      },
+      "max_segments": {
+        "type": "int",
+        "description": "最大分段数",
+        "default": 10
+      },
+      "min_segment_chars": {
+        "type": "int",
+        "description": "触发分段的最小文本长度",
+        "default": 50
+      },
+      "split_pattern": {
+        "type": "string",
+        "description": "分段正则",
+        "default": "[。？！!?\\n…]+"
+      },
+      "min_segment_length": {
+        "type": "int",
+        "description": "最小分段长度",
+        "default": 5
+      }
+    }
+  },
+  "emotion_route": {
+    "type": "object",
+    "description": "情绪声线映射（关闭后不显示映射面板）",
+    "items": {
+      "enable": {
+        "type": "bool",
+        "description": "启用情绪声线映射",
+        "default": true
+      },
+      "marker": {
+        "type": "object",
+        "description": "情绪标记配置",
+        "condition": {
+          "enable": true
+        },
+        "items": {
+          "enable": {
+            "type": "bool",
+            "description": "启用隐藏情绪标记解析",
+            "default": true
+          },
+          "tag": {
+            "type": "string",
+            "description": "标记标签",
+            "default": "EMO"
+          },
+          "prompt_hint": {
+            "type": "text",
+            "description": "注入到提示词的说明",
+            "default": "请在回复开头添加 [EMO:fluent|happy|sad|angry|fearful|surprised]，该标记仅供系统解析，不对用户显示。"
+          }
+        }
+      },
+      "keywords": {
+        "type": "object",
+        "description": "情绪关键词",
+        "condition": {
+          "enable": true
+        },
+        "items": {
+          "happy": {
+            "type": "list",
+            "description": "开心关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["happy", "great", "lol"]
+          },
+          "fluent": {
+            "type": "list",
+            "description": "日常/生动关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["fluent", "calm", "neutral"]
+          },
+          "sad": {
+            "type": "list",
+            "description": "难过关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["sad", "sorry", "cry"]
+          },
+          "angry": {
+            "type": "list",
+            "description": "生气关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["angry", "mad", "annoyed"]
+          },
+          "fearful": {
+            "type": "list",
+            "description": "恐惧关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["fear", "fearful", "anxious"]
+          },
+          "surprised": {
+            "type": "list",
+            "description": "惊讶关键词",
+            "items": {
+              "type": "string"
+            },
+            "default": ["surprised", "shock", "wow"]
+          }
+        }
+      },
+      "voice_map": {
+        "type": "object",
+        "description": "情绪到音色映射",
+        "condition": {
+          "enable": true
+        },
+        "items": {
+          "fluent": {
+            "type": "string",
+            "description": "日常/生动音色",
+            "default": ""
+          },
+          "neutral": {
+            "type": "string",
+            "description": "中性音色（兼容）",
+            "default": ""
+          },
+          "happy": {
+            "type": "string",
+            "description": "开心音色",
+            "default": ""
+          },
+          "sad": {
+            "type": "string",
+            "description": "难过音色",
+            "default": ""
+          },
+          "angry": {
+            "type": "string",
+            "description": "生气音色",
+            "default": ""
+          },
+          "fearful": {
+            "type": "string",
+            "description": "恐惧音色",
+            "default": ""
+          },
+          "surprised": {
+            "type": "string",
+            "description": "惊讶音色",
+            "default": ""
+          }
+        }
+      },
+      "speed_map": {
+        "type": "object",
+        "description": "情绪到语速映射",
+        "condition": {
+          "enable": true
+        },
+        "items": {
+          "fluent": {
+            "type": "float",
+            "description": "日常/生动语速",
+            "default": 1.0
+          },
+          "neutral": {
+            "type": "float",
+            "description": "中性语速（兼容）",
+            "default": 1.0
+          },
+          "happy": {
+            "type": "float",
+            "description": "开心语速",
+            "default": 1.0
+          },
+          "sad": {
+            "type": "float",
+            "description": "难过语速",
+            "default": 1.0
+          },
+          "angry": {
+            "type": "float",
+            "description": "生气语速",
+            "default": 1.0
+          },
+          "fearful": {
+            "type": "float",
+            "description": "恐惧语速",
+            "default": 1.0
+          },
+          "surprised": {
+            "type": "float",
+            "description": "惊讶语速",
+            "default": 1.0
+          }
+        }
+      }
+    }
+  }
+}
