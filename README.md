@@ -1,0 +1,2 @@
+# astrbot_plugin_minimax_tts
+astrbot_plugin_minimax_tts
