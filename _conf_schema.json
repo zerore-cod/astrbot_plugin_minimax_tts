@@ -2,8 +2,8 @@
   "umo_guide": {
     "type": "string",
     "description": "UMO 获取说明",
-    "default": "在聊天中发送 /sid 获取当前会话 UMO。下面所有黑白名单字段都填写 UMO。",
-    "hint": "仅用于展示提示，建议保持默认值。"
+    "default": "在聊天中发送 /sid 获取当前会话的唯一ID",
+    "hint": "仅用于展示提示，不修改任何功能。"
   },
   "tts_engine": {
     "type": "object",
@@ -70,7 +70,7 @@
           },
           "default_voice": {
             "type": "string",
-            "description": "默认音色 ID（至少配置 neutral）",
+            "description": "默认音色 ID",
             "default": ""
           }
         }
@@ -100,7 +100,7 @@
           "voice_id": {
             "type": "string",
             "description": "默认音色 voice_id",
-            "default": "BocchiTheRock01"
+            "default": "female-tianmei"
           },
           "speed": {
             "type": "float",
@@ -170,7 +170,7 @@
   },
   "feature_policies": {
     "type": "object",
-    "description": "功能开关策略（每项都支持 UMO 黑白名单）",
+    "description": "功能开关策略",
     "items": {
       "voice_output": {
         "type": "object",
@@ -291,7 +291,7 @@
       },
       "probability_output": {
         "type": "object",
-        "description": "概率语音输出",
+        "description": "语音输出概率",
         "items": {
           "enable": {
             "type": "bool",
@@ -561,7 +561,7 @@
           },
           "neutral": {
             "type": "float",
-            "description": "中性语速（兼容）",
+            "description": "中性语速",
             "default": 1.0
           },
           "happy": {
