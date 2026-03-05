@@ -517,7 +517,7 @@
           },
           "neutral": {
             "type": "string",
-            "description": "中性音色（兼容）",
+            "description": "中性音色",
             "default": ""
           },
           "happy": {
