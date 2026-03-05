@@ -6,8 +6,8 @@ from typing import Dict, List, Pattern, Set, Tuple
 import re
 
 # Plugin metadata
-PLUGIN_ID = "minimax_tts"
-PLUGIN_NAME = "MiniMax TTS"
+PLUGIN_ID = "astrbot_plugin_ai_tts"
+PLUGIN_NAME = "Ai语音"
 PLUGIN_DESC = (
     "MiniMax TTS 插件：尽量还原 MiniMax 的克隆声线，支持多种情绪声线切换、"
     "会话策略、分段/概率与按需语音调用。"
